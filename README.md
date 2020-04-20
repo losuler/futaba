@@ -1,4 +1,3 @@
-<br/>
 <p align="center">
   <a href="https://github.com/losuler/futaba">
     <img src="img/futaba.png" alt="logo" width="150" height="150">
