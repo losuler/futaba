@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"io/ioutil"
 	"regexp"
+	"strings"
 	"github.com/go-yaml/yaml"
 	"github.com/bwmarrin/discordgo"
 )
@@ -85,7 +86,7 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if account.Username != "" {
 			dayTime := getTime(account)
 			msg := fmt.Sprintf("It's %s where %s is.",
-			dayTime, account.Username)
+			dayTime, strings.Title(account.Username))
 			
 			_, err := s.ChannelMessageSend(m.ChannelID, msg)
 			if err != nil {
