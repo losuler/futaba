@@ -1,0 +1,12 @@
+[Unit]
+Description=A silly Discord bot for a friend.
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+WorkingDirectory=/path/to/futaba
+ExecStart=/path/to/futaba/main
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
