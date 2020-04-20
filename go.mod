@@ -1,4 +1,4 @@
-module gitlab.com/losuler/discord-bot
+module gitlab.com/losuler/futaba
 
 go 1.12
 
