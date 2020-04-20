@@ -79,6 +79,7 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	timeReg := regexp.MustCompile(`t(ime)?\.(.*)`)
 
+	// TODO: Make into case statement for each command.
 	if timeReg.MatchString(m.Content) {
 		userMatch := timeReg.FindStringSubmatch(m.Content)
 		account := getAcc(c, userMatch)
