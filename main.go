@@ -48,6 +48,7 @@ func getAcc(c Config, userMatch []string) Users {
 	for _, user := range c.Users {
 		// Check all submatches (probably inefficient).
 		for _, subMatch := range userMatch {
+			// TODO: Check for more than one nickname.
 			if subMatch == user.Username || subMatch == user.Nicknames {
 				return user
 			}
@@ -76,7 +77,7 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	c := readConfig("config.yml")
 
-	timeReg := regexp.MustCompile(`t(ime)\.(.*)`)
+	timeReg := regexp.MustCompile(`t(ime)?\.(.*)`)
 
 	if timeReg.MatchString(m.Content) {
 		userMatch := timeReg.FindStringSubmatch(m.Content)
