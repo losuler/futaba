@@ -45,9 +45,9 @@ func getAcc(c Config, userMatch []string) Users {
 	var user Users
 
 	for _, user := range c.Users {
-		// Check all submatches.
+		// Check all submatches (probably inefficient).
 		for _, subMatch := range userMatch {
-			if subMatch == user.Username {
+			if subMatch == user.Username || subMatch == user.Nicknames {
 				return user
 			}
 		}
@@ -84,7 +84,8 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 		// If no account was returned.
 		if account.Username != "" {
 			dayTime := getTime(account)
-			msg := fmt.Sprintf("It's %s where %s is.", dayTime, account.Username)
+			msg := fmt.Sprintf("It's %s where %s is.",
+			dayTime, account.Username)
 			
 			_, err := s.ChannelMessageSend(m.ChannelID, msg)
 			if err != nil {
