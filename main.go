@@ -27,6 +27,7 @@ type Users struct {
 	UserID string `yaml:"userid"`
 	Timezone string	`yaml:"timezone"`
 	Nicknames string `yaml:"nicknames"`
+	Commands string `yaml:"commands"`
 }
 
 func readConfig(configFile string) Config {
@@ -50,9 +51,21 @@ func getAcc(c Config, userMatch []string) (Users, string) {
 		for _, subMatch := range userMatch {
 			// TODO: Check for more than one nickname.
 			if strings.ToLower(subMatch) == strings.ToLower(user.Username) {
-				return user, subMatch
+				// Return username if command used as username.
+				if user.Commands != "" {
+					return user, user.Username
+				} else {
+					return user, subMatch
+				}
 			} else if strings.ToLower(subMatch) == strings.ToLower(user.Nicknames) {
-				return user, subMatch
+				// Return username if command used as username.
+				if user.Commands != "" {
+					return user, user.Username
+				} else {
+					return user, subMatch
+				}
+			} else if strings.ToLower(subMatch) == strings.ToLower(user.Commands) {
+				return user, user.Username
 			}
 		}
 	}
