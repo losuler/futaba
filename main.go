@@ -69,33 +69,43 @@ func getTime(account Users) string {
 	return dayTime
 }
 
+func sendTime(conf Config, cmd *regexp.Regexp, 
+			  s *discordgo.Session, m *discordgo.MessageCreate) {
+
+	userMatch := cmd.FindStringSubmatch(m.Content)
+	account := getAcc(conf, userMatch)
+	
+	// If no account was returned.
+	if account.Username != "" {
+		dayTime := getTime(account)
+		msg := fmt.Sprintf("It's %s where %s is.",
+		dayTime, strings.Title(account.Username))
+		
+		_, err := s.ChannelMessageSend(m.ChannelID, msg)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+}
+
 func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Check the message is not from the bot.
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
 
-	c := readConfig("config.yml")
+	conf := readConfig("config.yml")
 
+	// Regexp for each command.
 	timeFull := regexp.MustCompile(`time\.(.*)`)
 	timePart := regexp.MustCompile(`t\.(.*)`)
-
+	
 	// TODO: Make into case statement for each command.
-	if timeFull.MatchString(m.Content) {
-		userMatch := timeFull.FindStringSubmatch(m.Content)
-		account := getAcc(c, userMatch)
-		
-		// If no account was returned.
-		if account.Username != "" {
-			dayTime := getTime(account)
-			msg := fmt.Sprintf("It's %s where %s is.",
-			dayTime, strings.Title(account.Username))
-			
-			_, err := s.ChannelMessageSend(m.ChannelID, msg)
-			if err != nil {
-				fmt.Println(err)
-			}
-		}
+	switch {
+		case timeFull.MatchString(m.Content):
+			sendTime(conf, timeFull, s, m)
+		case timePart.MatchString(m.Content):
+			sendTime(conf, timePart, s, m)
 	}
 }
 
