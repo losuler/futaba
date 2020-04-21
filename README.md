@@ -33,7 +33,7 @@ discord:
 
 Each list entry refers to a user on the server.
 
-- On Linux you can use `timedatectl --list-timezones` to find the correct timezone.
+- On Linux you can use `timedatectl list-timezones` to find the correct timezone.
 
 ```yaml
 users:
