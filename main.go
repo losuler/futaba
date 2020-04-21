@@ -75,7 +75,7 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 	userMatch := cmd.FindStringSubmatch(m.Content)
 	account := getAcc(conf, userMatch)
 	
-	// If no account was returned.
+	// Only if account was returned.
 	if account.Username != "" {
 		dayTime := getTime(account)
 		msg := fmt.Sprintf("It's %s where %s is.",
