@@ -49,7 +49,9 @@ func getAcc(c Config, userMatch []string) (Users, string) {
 		// Check all submatches (probably inefficient).
 		for _, subMatch := range userMatch {
 			// TODO: Check for more than one nickname.
-			if subMatch == user.Username || subMatch == user.Nicknames {
+			if strings.ToLower(subMatch) == strings.ToLower(user.Username) {
+				return user, subMatch
+			} else if strings.ToLower(subMatch) == strings.ToLower(user.Nicknames) {
 				return user, subMatch
 			}
 		}
