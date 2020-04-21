@@ -49,14 +49,16 @@ func getAcc(c Config, userMatch []string) (Users, string) {
 	for _, user := range c.Users {
 		// Check all submatches (probably inefficient).
 		for _, subMatch := range userMatch {
-			// TODO: Check for more than one nickname.
-			if strings.ToLower(subMatch) == strings.ToLower(user.Username) {
+			if strings.ToLower(subMatch) == strings.ToLower(user.Commands) {
+				return user, user.Username
+			} else if strings.ToLower(subMatch) == strings.ToLower(user.Username) {
 				// Return username if command used as username.
 				if user.Commands != "" {
 					return user, user.Username
 				} else {
 					return user, subMatch
 				}
+			// TODO: Check for more than one nickname.
 			} else if strings.ToLower(subMatch) == strings.ToLower(user.Nicknames) {
 				// Return username if command used as username.
 				if user.Commands != "" {
@@ -64,8 +66,6 @@ func getAcc(c Config, userMatch []string) (Users, string) {
 				} else {
 					return user, subMatch
 				}
-			} else if strings.ToLower(subMatch) == strings.ToLower(user.Commands) {
-				return user, user.Username
 			}
 		}
 	}
