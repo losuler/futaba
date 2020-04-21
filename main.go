@@ -77,6 +77,11 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 	
 	// Only if account was returned.
 	if account.Username != "" {
+		if userName == "" {
+			fmt.Println("[ERROR] Could not parse username in command.")
+			return
+		}
+
 		dayTime := getTime(account)
 		msg := fmt.Sprintf("It's %s where %s is.",
 		dayTime, strings.Title(userName))
