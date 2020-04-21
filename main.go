@@ -42,7 +42,7 @@ func readConfig(configFile string) Config {
 	return c
 }
 
-func getAcc(c Config, userMatch []string) Users {
+func getAcc(c Config, userMatch []string) (Users, string) {
 	var user Users
 
 	for _, user := range c.Users {
@@ -50,11 +50,11 @@ func getAcc(c Config, userMatch []string) Users {
 		for _, subMatch := range userMatch {
 			// TODO: Check for more than one nickname.
 			if subMatch == user.Username || subMatch == user.Nicknames {
-				return user
+				return user, subMatch
 			}
 		}
 	}
-	return user
+	return user, ""
 }
 
 func getTime(account Users) string {
@@ -73,13 +73,13 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 			  s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	userMatch := cmd.FindStringSubmatch(m.Content)
-	account := getAcc(conf, userMatch)
+	account, userName := getAcc(conf, userMatch)
 	
 	// Only if account was returned.
 	if account.Username != "" {
 		dayTime := getTime(account)
 		msg := fmt.Sprintf("It's %s where %s is.",
-		dayTime, strings.Title(account.Username))
+		dayTime, strings.Title(userName))
 		
 		_, err := s.ChannelMessageSend(m.ChannelID, msg)
 		if err != nil {
