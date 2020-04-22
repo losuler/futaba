@@ -24,7 +24,7 @@
 
 ## Configuration
 
-The configuration file `config.yaml` has two main sections (see `config.yaml.example`).
+The configuration file `config.yml` has two main sections (see `config.yml.example`).
 
 The `token` is the token for the bot (see [create a bot](#create-a-bot)).
 
@@ -55,7 +55,7 @@ users:
 
 4. Click `Bot` on the left side menu, then click `Add Bot`.
 
-5. Under `Token`, click `Click to Reveal Token` to reveal the bot's token (used in `config.yaml`).
+5. Under `Token`, click `Click to Reveal Token` to reveal the bot's token (used in `config.yml`).
 
 ## Add a bot to a server
 
