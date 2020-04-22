@@ -43,32 +43,20 @@ func readConfig(configFile string) Config {
 	return c
 }
 
-func getAcc(c Config, userMatch []string) (Users, string) {
+func getAcc(c Config, suffix string) (Users, string) {
 	var user Users
 
 	for _, user := range c.Users {
-		// Check all submatches (probably inefficient).
-		for _, subMatch := range userMatch {
-			if strings.ToLower(subMatch) == strings.ToLower(user.Commands) {
-				return user, user.Username
-			} else if strings.ToLower(subMatch) == strings.ToLower(user.Username) {
-				// Return username if command used as username.
-				if user.Commands != "" {
-					return user, user.Username
-				} else {
-					return user, subMatch
-				}
-			// TODO: Check for more than one nickname.
-			} else if strings.ToLower(subMatch) == strings.ToLower(user.Nicknames) {
-				// Return username if command used as username.
-				if user.Commands != "" {
-					return user, user.Username
-				} else {
-					return user, subMatch
-				}
-			}
+		if strings.ToLower(suffix) == strings.ToLower(user.Commands) {
+			return user, user.Username
+		} else if strings.ToLower(suffix) == strings.ToLower(user.Username) {
+			return user, user.Username
+		// TODO: Check for more than one nickname.
+		} else if strings.ToLower(suffix) == strings.ToLower(user.Nicknames) {
+			return user, user.Username
 		}
 	}
+
 	return user, ""
 }
 
@@ -87,8 +75,9 @@ func getTime(account Users) string {
 func sendTime(conf Config, cmd *regexp.Regexp, 
 			  s *discordgo.Session, m *discordgo.MessageCreate) {
 
-	userMatch := cmd.FindStringSubmatch(m.Content)
-	account, userName := getAcc(conf, userMatch)
+	suffix := cmd.FindStringSubmatch(m.Content)
+	// [1] is the first group in ().
+	account, userName := getAcc(conf, suffix[1])
 	
 	// Only if account was returned.
 	if account.Username != "" {
