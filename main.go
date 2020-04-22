@@ -117,9 +117,9 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 	conf := readConfig("config.yml")
 
 	// Regexp for each command.
-	timeFull := regexp.MustCompile(`time\.(.*)`)
-	timePart := regexp.MustCompile(`t\.(.*)`)
-	
+	timeFull := regexp.MustCompile(`time\.(.+)`)
+	timePart := regexp.MustCompile(`t\.(.+)`)
+
 	// TODO: Make into case statement for each command.
 	switch {
 		case timeFull.MatchString(m.Content):
