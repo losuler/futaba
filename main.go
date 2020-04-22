@@ -85,6 +85,7 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 	}
 
 	dayTime := getTime(account)
+
 	msg := fmt.Sprintf("It's %s where %s is.",
 		dayTime, strings.Title(userName))
 
