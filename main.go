@@ -74,7 +74,7 @@ func getTime(account Users) string {
 }
 
 func sendTime(conf Config, cmd *regexp.Regexp, 
-			  s *discordgo.Session, m *discordgo.MessageCreate) {
+	s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	suffix := cmd.FindStringSubmatch(m.Content)
 
@@ -86,7 +86,7 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 
 	dayTime := getTime(account)
 	msg := fmt.Sprintf("It's %s where %s is.",
-	dayTime, strings.Title(userName))
+		dayTime, strings.Title(userName))
 
 	_, err = s.ChannelMessageSend(m.ChannelID, msg)
 	if err != nil {
