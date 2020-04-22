@@ -1,16 +1,16 @@
 <div align="center">
-    <p align="center">
-      <a href="https://github.com/losuler/futaba">
-        <img src="img/futaba.png" alt="logo" width="150" height="150">
-      </a>
+<p align="center">
+  <a href="https://github.com/losuler/futaba">
+    <img src="img/futaba.png" alt="logo" width="150" height="150">
+  </a>
 
-      <p align="center">
-        <h3 align="center">Futaba</h3>
-        <p align="center">
-          A silly Discord bot for a friend.
-        </p>
-      </p>
+  <p align="center">
+    <h3 align="center">Futaba</h3>
+    <p align="center">
+      A silly Discord bot for a friend.
     </p>
+  </p>
+</p>
 </div>
 
 ## Commands
