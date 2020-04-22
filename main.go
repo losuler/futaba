@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"regexp"
 	"strings"
+	"errors"
 	"github.com/go-yaml/yaml"
 	"github.com/bwmarrin/discordgo"
 )
@@ -43,21 +44,21 @@ func readConfig(configFile string) Config {
 	return c
 }
 
-func getAcc(c Config, suffix string) (Users, string) {
+func getAcc(c Config, suffix string) (Users, string, error) {
 	var user Users
 
 	for _, user := range c.Users {
 		if strings.ToLower(suffix) == strings.ToLower(user.Commands) {
-			return user, user.Username
+			return user, user.Username, nil
 		} else if strings.ToLower(suffix) == strings.ToLower(user.Username) {
-			return user, user.Username
+			return user, user.Username, nil
 		// TODO: Check for more than one nickname.
 		} else if strings.ToLower(suffix) == strings.ToLower(user.Nicknames) {
-			return user, user.Username
+			return user, user.Username, nil
 		}
 	}
 
-	return user, ""
+	return user, suffix, errors.New("Account doesn't exist.")
 }
 
 func getTime(account Users) string {
@@ -76,24 +77,20 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 			  s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	suffix := cmd.FindStringSubmatch(m.Content)
-	// [1] is the first group in ().
-	account, userName := getAcc(conf, suffix[1])
-	
-	// Only if account was returned.
-	if account.Username != "" {
-		if userName == "" {
-			fmt.Println("[ERROR] Could not parse username in command.")
-			return
-		}
 
-		dayTime := getTime(account)
-		msg := fmt.Sprintf("It's %s where %s is.",
-		dayTime, strings.Title(userName))
-		
-		_, err := s.ChannelMessageSend(m.ChannelID, msg)
-		if err != nil {
-			fmt.Println(err)
-		}
+	// [1] is the first group in ().
+	account, userName, err := getAcc(conf, suffix[1])
+	if err != nil {
+		return
+	}
+
+	dayTime := getTime(account)
+	msg := fmt.Sprintf("It's %s where %s is.",
+	dayTime, strings.Title(userName))
+
+	_, err = s.ChannelMessageSend(m.ChannelID, msg)
+	if err != nil {
+		fmt.Println(err)
 	}
 }
 
