@@ -6,7 +6,7 @@ Requires=network-online.target
 [Service]
 WorkingDirectory=/path/to/futaba
 ExecStart=/path/to/futaba/main
-Restart=no
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
