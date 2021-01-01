@@ -116,7 +116,7 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 }
 
 func main() {
-	c := readConfig("config.yml")
+	c := readConfig("/etc/futaba.yml")
 
 	dg, err := discordgo.New("Bot " + c.Discord.Token)
 	if err != nil {

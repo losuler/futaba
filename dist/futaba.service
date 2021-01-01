@@ -4,8 +4,7 @@ After=network-online.target
 Requires=network-online.target
 
 [Service]
-WorkingDirectory=/path/to/futaba
-ExecStart=/path/to/futaba/main
+ExecStart=/usr/bin/futaba
 Restart=always
 
 [Install]
