@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"errors"
-	"github.com/go-yaml/yaml"
+	"gopkg.in/yaml.v2"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -101,7 +101,7 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	conf := readConfig("config.yml")
+	conf := readConfig("/etc/futaba.yml")
 
 	// Regexp for each command.
 	timeFull := regexp.MustCompile(`time\.(.+)`)
