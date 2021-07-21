@@ -33,11 +33,11 @@ type Users struct {
 
 func readConfig(configFile string) Config {
 	var c Config
-    
+
 	raw, err := ioutil.ReadFile(configFile)
 	if err != nil {
 		panic(err)
-	} 
+	}
 
 	err = yaml.Unmarshal([]byte(raw), &c)
 
@@ -73,7 +73,7 @@ func getTime(account Users) string {
 	return dayTime
 }
 
-func sendTime(conf Config, cmd *regexp.Regexp, 
+func sendTime(conf Config, cmd *regexp.Regexp,
 	s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	suffix := cmd.FindStringSubmatch(m.Content)
