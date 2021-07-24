@@ -53,7 +53,6 @@ func getAcc(c Config, suffix string) (Users, string, error) {
 			return user, user.Username, nil
 		} else if strings.ToLower(suffix) == strings.ToLower(user.Username) {
 			return user, user.Username, nil
-			// TODO: Check for more than one nickname.
 		} else if strings.ToLower(suffix) == strings.ToLower(user.Nicknames) {
 			return user, user.Username, nil
 		}
