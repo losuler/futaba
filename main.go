@@ -89,7 +89,7 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 	dayTime := getTime(account)
 
 	msg := fmt.Sprintf("It's %s where %s is.",
-		dayTime, strings.Title(userName))
+		dayTime, userName)
 
 	_, err = s.ChannelMessageSend(m.ChannelID, msg)
 	if err != nil {
