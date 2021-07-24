@@ -97,6 +97,26 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 	}
 }
 
+func sendUpdate(conf Config, cmd *regexp.Regexp,
+	s *discordgo.Session, m *discordgo.MessageCreate) {
+
+	guildsList := s.State.Guilds
+	log.Printf("[INFO] Number of users in the guild: %d.\n", guildsList[0].MemberCount)
+	log.Printf("[INFO] Usernames: %d.\n", len(guildsList[0].Members))
+
+	for _, member := range guildsList[0].Members {
+		log.Printf("[INFO] Username: %s.\n", member.User.Username)
+	}
+
+	// TODO: Include details about how many updated, etc.
+	msg := fmt.Sprintf("Updated users list.")
+
+	_, err := s.ChannelMessageSend(m.ChannelID, msg)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Check the message is not from the bot.
 	if m.Author.ID == s.State.User.ID {
@@ -106,9 +126,12 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 	conf := readConfig("/etc/futaba.yml")
 
 	// Regexp for each command.
+	timeUpdate := regexp.MustCompile(`(t|time)\.(update)`)
 	timeCheck := regexp.MustCompile(`(t|time)\.(.+)`)
 
 	switch {
+	case timeUpdate.MatchString(m.Content):
+		sendUpdate(conf, timeCheck, s, m)
 	case timeCheck.MatchString(m.Content):
 		sendTime(conf, timeCheck, s, m)
 	}
