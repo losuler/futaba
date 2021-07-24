@@ -1,22 +1,23 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"time"
+	"github.com/bwmarrin/discordgo"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
+	"log"
 	"os"
 	"os/signal"
-	"syscall"
-	"io/ioutil"
 	"regexp"
 	"strings"
-	"errors"
-	"gopkg.in/yaml.v3"
-	"github.com/bwmarrin/discordgo"
+	"syscall"
+	"time"
 )
 
 type Config struct {
 	Discord Discord `yaml:"discord"`
-	Users []Users `yaml:"users"`
+	Users   []Users `yaml:"users"`
 }
 
 type Discord struct {
@@ -24,11 +25,11 @@ type Discord struct {
 }
 
 type Users struct {
-	Username string `yaml:"username"`
-	UserID string `yaml:"userid"`
-	Timezone string	`yaml:"timezone"`
+	Username  string `yaml:"username"`
+	UserID    string `yaml:"userid"`
+	Timezone  string `yaml:"timezone"`
 	Nicknames string `yaml:"nicknames"`
-	Commands string `yaml:"commands"`
+	Commands  string `yaml:"commands"`
 }
 
 func readConfig(configFile string) Config {
@@ -52,7 +53,7 @@ func getAcc(c Config, suffix string) (Users, string, error) {
 			return user, user.Username, nil
 		} else if strings.ToLower(suffix) == strings.ToLower(user.Username) {
 			return user, user.Username, nil
-		// TODO: Check for more than one nickname.
+			// TODO: Check for more than one nickname.
 		} else if strings.ToLower(suffix) == strings.ToLower(user.Nicknames) {
 			return user, user.Username, nil
 		}
