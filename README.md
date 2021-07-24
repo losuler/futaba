@@ -59,7 +59,7 @@ users:
 
 6. In the left side menu, click `Bot`.
 
-7. Under `Privileged Gateway Intents`, enable `Server Members Intent`.
+7. Under `Privileged Gateway Intents`, enable `Presence Intent` and `Server Members Intent`.
 
 ## Add a bot to a server
 

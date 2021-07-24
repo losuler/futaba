@@ -145,8 +145,7 @@ func main() {
 		panic(err)
 	}
 
-	//dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAllWithoutPrivileged)
-	//dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildMembers)
+	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAll)
 
 	err = dg.Open()
 	if err != nil {
