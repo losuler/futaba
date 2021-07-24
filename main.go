@@ -97,6 +97,40 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 	}
 }
 
+func memberInConf(member *discordgo.Member, conf Config) bool {
+	for _, confUser := range conf.Users {
+		if member.User.ID == confUser.UserID {
+			return true
+		}
+	}
+	return false
+}
+
+func updateConfig(conf Config, members []*discordgo.Member) {
+	for _, member := range members {
+		if !memberInConf(member, conf) {
+			var confUser Users
+
+			confUser.Username = member.User.Username
+			confUser.UserID = member.User.ID
+			confUser.Timezone = ""
+			confUser.Nicknames = member.Nick
+
+			conf.Users = append(conf.Users, confUser)
+		}
+	}
+
+	data, err := yaml.Marshal(&conf)
+	if err != nil {
+		log.Println("[ERROR] ", err)
+	}
+
+	err = ioutil.WriteFile("/etc/futaba.yml", data, 0)
+	if err != nil {
+		log.Println("[ERROR] ", err)
+	}
+}
+
 func sendUpdate(conf Config, cmd *regexp.Regexp,
 	s *discordgo.Session, m *discordgo.MessageCreate) {
 
@@ -107,6 +141,8 @@ func sendUpdate(conf Config, cmd *regexp.Regexp,
 	for _, member := range guildsList[0].Members {
 		log.Printf("[INFO] Username: %s.\n", member.User.Username)
 	}
+
+	updateConfig(conf, guildsList[0].Members)
 
 	// TODO: Include details about how many updated, etc.
 	msg := fmt.Sprintf("Updated users list.")
