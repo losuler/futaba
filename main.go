@@ -29,7 +29,7 @@ type Users struct {
 	UserID    string `yaml:"userid"`
 	Timezone  string `yaml:"timezone"`
 	Nicknames string `yaml:"nicknames"`
-	Commands  string `yaml:"commands"`
+	Admin     bool   `yaml:"admin"`
 }
 
 func readConfig(configFile string) Config {
@@ -49,9 +49,7 @@ func getAcc(c Config, suffix string) (Users, string, error) {
 	var user Users
 
 	for _, user := range c.Users {
-		if strings.ToLower(suffix) == strings.ToLower(user.Commands) {
-			return user, user.Username, nil
-		} else if strings.ToLower(suffix) == strings.ToLower(user.Username) {
+		if strings.ToLower(suffix) == strings.ToLower(user.Username) {
 			return user, user.Username, nil
 		} else if strings.ToLower(suffix) == strings.ToLower(user.Nicknames) {
 			return user, user.Username, nil
@@ -105,6 +103,15 @@ func memberInConf(member *discordgo.Member, conf Config) bool {
 	return false
 }
 
+func userIsAdmin(user *discordgo.User, conf Config) bool {
+	for _, confUser := range conf.Users {
+		if user.ID == confUser.UserID && confUser.Admin == true {
+			return true
+		}
+	}
+	return false
+}
+
 func updateConfig(conf Config, members []*discordgo.Member) {
 	for _, member := range members {
 		if !memberInConf(member, conf) {
@@ -114,6 +121,7 @@ func updateConfig(conf Config, members []*discordgo.Member) {
 			confUser.UserID = member.User.ID
 			confUser.Timezone = ""
 			confUser.Nicknames = member.Nick
+			confUser.Admin = false
 
 			conf.Users = append(conf.Users, confUser)
 		}
@@ -132,6 +140,10 @@ func updateConfig(conf Config, members []*discordgo.Member) {
 
 func sendUpdate(conf Config, cmd *regexp.Regexp,
 	s *discordgo.Session, m *discordgo.MessageCreate) {
+	// Check if allowed to execute command
+	if !userIsAdmin(m.Author, conf) {
+		return
+	}
 
 	guildsList := s.State.Guilds
 	log.Printf("[INFO] Number of users in the guild: %d.\n", guildsList[0].MemberCount)
