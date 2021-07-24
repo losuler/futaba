@@ -77,6 +77,7 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 	s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	suffix := cmd.FindStringSubmatch(m.Content)
+	log.Printf("[INFO] Command match for user \"%s\".\n", suffix[2])
 
 	// [0] = whole match, [1] = command, [2] = username
 	account, userName, err := getAcc(conf, suffix[2])
