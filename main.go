@@ -78,8 +78,8 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 
 	suffix := cmd.FindStringSubmatch(m.Content)
 
-	// [1] is the first group in ().
-	account, userName, err := getAcc(conf, suffix[1])
+	// [0] = whole match, [1] = command, [2] = username
+	account, userName, err := getAcc(conf, suffix[2])
 	if err != nil {
 		return
 	}
@@ -104,14 +104,11 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 	conf := readConfig("/etc/futaba.yml")
 
 	// Regexp for each command.
-	timeFull := regexp.MustCompile(`time\.(.+)`)
-	timePart := regexp.MustCompile(`t\.(.+)`)
+	timeCheck := regexp.MustCompile(`(t|time)\.(.+)`)
 
 	switch {
-		case timeFull.MatchString(m.Content):
-			sendTime(conf, timeFull, s, m)
-		case timePart.MatchString(m.Content):
-			sendTime(conf, timePart, s, m)
+	case timeCheck.MatchString(m.Content):
+		sendTime(conf, timeCheck, s, m)
 	}
 }
 
