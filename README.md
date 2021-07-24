@@ -57,6 +57,10 @@ users:
 
 5. Under `Token`, click `Click to Reveal Token` to reveal the bot's token (used in `config.yml`).
 
+6. In the left side menu, click `Bot`.
+
+7. Under `Privileged Gateway Intents`, enable `Server Members Intent`.
+
 ## Add a bot to a server
 
 1. Replace `CLIENT_ID` with the client ID of the application (navigate to `General Information` 
