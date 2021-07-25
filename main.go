@@ -61,7 +61,7 @@ func getAcc(c Config, suffix string) (Users, string, error) {
 		}
 	}
 
-	return user, suffix, errors.New("Account doesn't exist.")
+	return user, suffix, errors.New(" Account doesn't exist.")
 }
 
 func getTime(account Users) string {
