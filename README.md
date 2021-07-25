@@ -68,7 +68,7 @@ users:
     - username: name
       userid: 1234567890
       timezone: America/Los_Angeles
-      nicknames: nick
+      nickname: nick
       admin: false
 ```
 

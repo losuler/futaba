@@ -10,5 +10,5 @@ users:
     - username:
       userid:
       timezone:
-      nicknames:
+      nickname:
       admin:
