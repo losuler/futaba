@@ -208,6 +208,54 @@ func setMute(addRole bool, conf Config, cmd *regexp.Regexp,
 	}
 }
 
+func setTime(conf Config, cmd *regexp.Regexp,
+	s *discordgo.Session, m *discordgo.MessageCreate) {
+
+	suffix := cmd.FindStringSubmatch(m.Content)
+
+	// [0] = whole match, [1] = command, [2] = username, [3] = timezone
+	account, _, err := getAcc(conf, suffix[2])
+	if err != nil {
+		log.Println("[ERROR]", err)
+	}
+
+	// Only admins can edit anyone, everyone else can only edit their own account
+	if !userIsAdmin(m.Author, conf) && m.Author.ID != account.UserID {
+		log.Printf("[WARN] %s is only allowed to alter their own timezone.\n", m.Author.Username)
+		return
+	}
+
+	ianaTZ := regexp.MustCompile(`(\w+)\/(\w+)(\/w+)*`)
+
+	if ianaTZ.MatchString(suffix[3]) {
+		suffix[3] = strings.Title(suffix[3])
+	}
+
+	_, err = time.LoadLocation(suffix[3])
+	if err != nil {
+		log.Println("[ERROR]", err)
+		return
+	}
+
+	for i, user := range conf.Users {
+		if user.UserID == account.UserID {
+			conf.Users[i].Timezone = suffix[3]
+		}
+	}
+
+	data, err := yaml.Marshal(conf)
+	if err != nil {
+		log.Println("[ERROR]", err)
+	}
+
+	err = ioutil.WriteFile("/etc/futaba.yml", data, 0)
+	if err != nil {
+		log.Println("[ERROR]", err)
+	}
+
+	log.Printf("[INFO] Timezone %s for %s set by %s.\n", suffix[3], suffix[2], m.Author.Username)
+}
+
 func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Check the message is not from the bot.
 	if m.Author.ID == s.State.User.ID {
@@ -219,6 +267,7 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Regexp for each command.
 	timeUpdate := regexp.MustCompile(`^(t|time)\.(update)`)
 	timeCheck := regexp.MustCompile(`^(t|time)\.(.+)`)
+	timeSet := regexp.MustCompile(`^(s|set)\.(.+)\s(.+)`)
 	muteUser := regexp.MustCompile(`^(m|mute)\.(.+)`)
 	unmuteUser := regexp.MustCompile(`^(\!m|unmute)\.(.+)`)
 
@@ -227,6 +276,8 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 		sendUpdate(conf, timeCheck, s, m)
 	case timeCheck.MatchString(m.Content):
 		sendTime(conf, timeCheck, s, m)
+	case timeSet.MatchString(m.Content):
+		setTime(conf, timeSet, s, m)
 	case muteUser.MatchString(m.Content):
 		setMute(true, conf, muteUser, s, m)
 	case unmuteUser.MatchString(m.Content):

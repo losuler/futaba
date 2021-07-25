@@ -21,6 +21,12 @@
     t.user, time.user
     ```
 
+- Set the timezone of a user (`admin` must be set or the user themself to call)
+
+    ```
+    s.user america/chicago, set.user america/chicago
+    ```
+
 - Assign or un-assign a role that mutes a user (`admin` must be set to `true` to call).
 
     ```
