@@ -3,8 +3,12 @@
 discord:
     token:
 
+roles:
+    muteid:
+
 users:
     - username:
       userid:
       timezone:
       nicknames:
+      admin:
