@@ -147,6 +147,7 @@ func sendUpdate(conf Config, cmd *regexp.Regexp,
 	s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Check if allowed to execute command
 	if !userIsAdmin(m.Author, conf) {
+		log.Printf("[WARN] %s is not allowed to update the config.\n", m.Author.Username)
 		return
 	}
 
