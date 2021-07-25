@@ -42,7 +42,7 @@ func readConfig(configFile string) Config {
 
 	raw, err := ioutil.ReadFile(configFile)
 	if err != nil {
-		panic(err)
+		log.Fatalln("[ERROR]", err)
 	}
 
 	err = yaml.Unmarshal([]byte(raw), &c)
@@ -67,7 +67,7 @@ func getAcc(c Config, suffix string) (Users, string, error) {
 func getTime(account Users) string {
 	tz, err := time.LoadLocation(account.Timezone)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("[ERROR]", err)
 	}
 
 	timeNow := time.Now().In(tz)
@@ -85,6 +85,7 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 	// [0] = whole match, [1] = command, [2] = username
 	account, userName, err := getAcc(conf, suffix[2])
 	if err != nil {
+		log.Printf("[WARN] No account matching \"%s\" was found.\n", suffix[2])
 		return
 	}
 
@@ -95,7 +96,7 @@ func sendTime(conf Config, cmd *regexp.Regexp,
 
 	_, err = s.ChannelMessageSend(m.ChannelID, msg)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("[ERROR]", err)
 	}
 }
 
@@ -134,12 +135,12 @@ func updateConfig(conf Config, members []*discordgo.Member) {
 
 	data, err := yaml.Marshal(&conf)
 	if err != nil {
-		log.Println("[ERROR] ", err)
+		log.Println("[ERROR]", err)
 	}
 
 	err = ioutil.WriteFile("/etc/futaba.yml", data, 0)
 	if err != nil {
-		log.Println("[ERROR] ", err)
+		log.Println("[ERROR]", err)
 	}
 }
 
@@ -166,7 +167,7 @@ func sendUpdate(conf Config, cmd *regexp.Regexp,
 
 	_, err := s.ChannelMessageSend(m.ChannelID, msg)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("[ERROR]", err)
 	}
 }
 
@@ -184,7 +185,7 @@ func setMute(addRole bool, conf Config, cmd *regexp.Regexp,
 	// [0] = whole match, [1] = command, [2] = username
 	account, userName, err := getAcc(conf, suffix[2])
 	if err != nil {
-		log.Println("[ERROR] ", err)
+		log.Println("[ERROR]", err)
 		return
 	}
 
@@ -238,19 +239,19 @@ func main() {
 
 	dg, err := discordgo.New("Bot " + c.Discord.Token)
 	if err != nil {
-		panic(err)
+		log.Fatalln("[ERROR]", err)
 	}
 
 	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAll)
 
 	err = dg.Open()
 	if err != nil {
-		panic(err)
+		log.Fatalln("[ERROR]", err)
 	}
 
 	dg.AddHandler(messageRecieve)
 
-	fmt.Println("Bot is now running. Press CTRL-C to exit.")
+	log.Println("Bot is now running. Press CTRL-C to exit.")
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sigChan
