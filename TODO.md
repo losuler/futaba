@@ -5,3 +5,4 @@
 - [x] Fix README.md Gitlab layout should match Github
 - [ ] Add help command (e.g. `t.help`)
 - [x] Add ability to assign a role that mutes someone
+- [ ] Update member's nickname in config when it changes (i.e. `discordgo.GuildMemberUpdate`)
