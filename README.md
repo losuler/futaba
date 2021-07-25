@@ -15,16 +15,28 @@
 
 ## Commands
 
-- Show the current time of a user on your server.
+- Show the current time of a user.
 
     ```
-    t.user
-    time.user
+    t.user, time.user
+    ```
+
+- Assign or un-assign a role that mutes a user (`admin` must be set to `true` to call).
+
+    ```
+    m.user, mute.user
+    !m.user, unmute.user
+    ```
+
+- Add all users to configuration file (`admin` must be set to `true` to call).
+
+    ```
+    t.update, time.update
     ```
 
 ## Configuration
 
-The configuration file `config.yml` has two main sections (see `config.yml.example`).
+The configuration file `config.yml` has three main sections (see `config.yml.example`).
 
 The `token` is the token for the bot (see [create a bot](#create-a-bot)).
 
@@ -33,9 +45,17 @@ discord:
     token: 1234567890
 ```
 
+The `muteid` is the ID for the role that mutes a user (must be created manually).
+
+```yaml
+roles:
+    muteid: 1234567890
+```
+
 Each list entry refers to a user on the server.
 
 - On Linux you can use `timedatectl list-timezones` to find the correct timezone.
+- `admin` allows that specific user to call commands that require it (see [commands](#commands)).
 
 ```yaml
 users:
@@ -43,6 +63,7 @@ users:
       userid: 1234567890
       timezone: America/Los_Angeles
       nicknames: nick
+      admin: false
 ```
 
 ## Create a bot
