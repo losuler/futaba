@@ -17,7 +17,12 @@ import (
 
 type Config struct {
 	Discord Discord `yaml:"discord"`
+	Roles   Roles   `yaml:"roles"`
 	Users   []Users `yaml:"users"`
+}
+
+type Roles struct {
+	MuteID string `yaml:"muteid"`
 }
 
 type Discord struct {
@@ -164,6 +169,43 @@ func sendUpdate(conf Config, cmd *regexp.Regexp,
 	}
 }
 
+func setMute(addRole bool, conf Config, cmd *regexp.Regexp,
+	s *discordgo.Session, m *discordgo.MessageCreate) {
+	// Check if allowed to execute command
+	if !userIsAdmin(m.Author, conf) {
+		log.Printf("[WARN] %s is not allowed to mute users.\n", m.Author.Username)
+		return
+	}
+
+	suffix := cmd.FindStringSubmatch(m.Content)
+	log.Printf("[INFO] Mute command match for user \"%s\".\n", suffix[2])
+
+	// [0] = whole match, [1] = command, [2] = username
+	account, userName, err := getAcc(conf, suffix[2])
+	if err != nil {
+		log.Println("[ERROR] ", err)
+		return
+	}
+
+	if addRole {
+		err = s.GuildMemberRoleAdd(s.State.Guilds[0].ID, account.UserID, conf.Roles.MuteID)
+		if err != nil {
+			log.Println("[ERROR]", err)
+			return
+		}
+
+		log.Printf("[INFO] %s has been muted.\n", userName)
+	} else {
+		err = s.GuildMemberRoleRemove(s.State.Guilds[0].ID, account.UserID, conf.Roles.MuteID)
+		if err != nil {
+			log.Println("[ERROR]", err)
+			return
+		}
+
+		log.Printf("[INFO] %s has been un-muted.\n", userName)
+	}
+}
+
 func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Check the message is not from the bot.
 	if m.Author.ID == s.State.User.ID {
@@ -173,14 +215,20 @@ func messageRecieve(s *discordgo.Session, m *discordgo.MessageCreate) {
 	conf := readConfig("/etc/futaba.yml")
 
 	// Regexp for each command.
-	timeUpdate := regexp.MustCompile(`(t|time)\.(update)`)
-	timeCheck := regexp.MustCompile(`(t|time)\.(.+)`)
+	timeUpdate := regexp.MustCompile(`^(t|time)\.(update)`)
+	timeCheck := regexp.MustCompile(`^(t|time)\.(.+)`)
+	muteUser := regexp.MustCompile(`^(m|mute)\.(.+)`)
+	unmuteUser := regexp.MustCompile(`^(\!m|unmute)\.(.+)`)
 
 	switch {
 	case timeUpdate.MatchString(m.Content):
 		sendUpdate(conf, timeCheck, s, m)
 	case timeCheck.MatchString(m.Content):
 		sendTime(conf, timeCheck, s, m)
+	case muteUser.MatchString(m.Content):
+		setMute(true, conf, muteUser, s, m)
+	case unmuteUser.MatchString(m.Content):
+		setMute(false, conf, unmuteUser, s, m)
 	}
 }
 
