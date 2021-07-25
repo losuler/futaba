@@ -30,11 +30,11 @@ type Discord struct {
 }
 
 type Users struct {
-	Username  string `yaml:"username"`
-	UserID    string `yaml:"userid"`
-	Timezone  string `yaml:"timezone"`
-	Nicknames string `yaml:"nicknames"`
-	Admin     bool   `yaml:"admin"`
+	Username string `yaml:"username"`
+	UserID   string `yaml:"userid"`
+	Timezone string `yaml:"timezone"`
+	Nickname string `yaml:"nickname"`
+	Admin    bool   `yaml:"admin"`
 }
 
 func readConfig(configFile string) Config {
@@ -56,7 +56,7 @@ func getAcc(c Config, suffix string) (Users, string, error) {
 	for _, user := range c.Users {
 		if strings.ToLower(suffix) == strings.ToLower(user.Username) {
 			return user, user.Username, nil
-		} else if strings.ToLower(suffix) == strings.ToLower(user.Nicknames) {
+		} else if strings.ToLower(suffix) == strings.ToLower(user.Nickname) {
 			return user, user.Username, nil
 		}
 	}
@@ -125,7 +125,7 @@ func updateConfig(conf Config, members []*discordgo.Member) {
 			confUser.Username = member.User.Username
 			confUser.UserID = member.User.ID
 			confUser.Timezone = ""
-			confUser.Nicknames = member.Nick
+			confUser.Nickname = member.Nick
 			confUser.Admin = false
 
 			conf.Users = append(conf.Users, confUser)
