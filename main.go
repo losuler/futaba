@@ -7,6 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"regexp"
@@ -294,6 +295,17 @@ func main() {
 	}
 
 	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAll)
+
+	for {
+		_, err := http.Get("https://discord.com/api/v8/gateway")
+		if err != nil {
+			fmt.Println("[ERROR]", err)
+		} else {
+			break
+		}
+
+		time.Sleep(10 * time.Second)
+	}
 
 	err = dg.Open()
 	if err != nil {
