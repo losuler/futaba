@@ -3,7 +3,7 @@ MAINTAINER losuler <losuler@posteo.net>
 
 WORKDIR /opt/futaba
 
-RUN dnf -y install golang
+RUN dnf -y install golang git
 RUN git clone https://gitlab.com/losuler/futaba .
 
 RUN go mod download
