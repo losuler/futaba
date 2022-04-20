@@ -1,4 +1,5 @@
-FROM centos:stream8
+# https://github.com/freeipa/freeipa-container/blob/master/Dockerfile.centos-8-stream
+FROM quay.io/centos/centos:stream8
 MAINTAINER losuler <losuler@posteo.net>
 
 WORKDIR /opt/futaba
