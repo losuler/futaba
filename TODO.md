@@ -9,3 +9,4 @@
 - [ ] Add Futaba quotes from Persona
 - [ ] Add alternative nicknames and command to add more
 - [ ] Add ever increasing reconnect attempts
+- [ ] Add steps in README.md for building and/or pulling the container image
