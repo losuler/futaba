@@ -9,6 +9,6 @@ RUN git clone https://gitlab.com/losuler/futaba .
 RUN go mod download
 RUN go build -o futaba main.go
 
-COPY config.yml.example /etc/futaba.yml
+RUN cp config.yml.example /etc/futaba.yml
 
 CMD ["./futaba"]
